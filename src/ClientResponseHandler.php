@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker;
 
@@ -7,7 +9,8 @@ use Lowel\Docker\Exceptions\ContainerAlreadyStoppedException;
 use Lowel\Docker\Exceptions\ContainerNotFoundException;
 use Lowel\Docker\Exceptions\DockerClientException;
 use Lowel\Docker\Exceptions\DockerClientInvalidParamsException;
-use Lowel\Docker\Response\DTO\Container;
+use Lowel\Docker\Response\DTO\Inspect\Container;
+use Lowel\Docker\Response\DTO\Stats\ContainerStats;
 use Lowel\Docker\Response\DTOFactory;
 use Lowel\Docker\Response\ResponseParser;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -17,25 +20,21 @@ use function func_get_args;
 
 class ClientResponseHandler implements ClientResponseHandlerInterface
 {
-    /** @var ClientInterface  */
     protected ClientInterface $client;
-    /** @var DTOFactory  */
+
     protected DTOFactory $dtoFactory;
 
-    /**
-     * @param ClientInterface $client
-     */
     public function __construct(ClientInterface $client)
     {
         $this->client = $client;
 
-        $this->dtoFactory = new DTOFactory(new ResponseParser());
+        $this->dtoFactory = new DTOFactory(new ResponseParser);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): array
+    public function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): array
     {
         try {
             $response = $this->client->containerList(...func_get_args());
@@ -43,20 +42,17 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
             throw new DockerClientException(previous: $clientException);
         }
 
-        return match($response->getStatusCode()) {
-            Response::HTTP_BAD_REQUEST =>
-                throw new DockerClientInvalidParamsException(func_get_args(), $response),
-            Response::HTTP_INTERNAL_SERVER_ERROR =>
-                throw new DockerClientException(),
-            Response::HTTP_OK =>
-                $this->dtoFactory->createDockerCollectionFromResponse($response)
+        return match ($response->getStatusCode()) {
+            Response::HTTP_BAD_REQUEST => throw new DockerClientInvalidParamsException(func_get_args(), $response),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_OK => $this->dtoFactory->createDockerCollectionFromResponse($response)
         };
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerInspect(string $id, bool $size = false): Container
+    public function containerInspect(string $id, bool $size = false): Container
     {
         try {
             $response = $this->client->containerInspect(...func_get_args());
@@ -64,20 +60,17 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
             throw new DockerClientException(previous: $clientException);
         }
 
-        return match($response->getStatusCode()) {
-            Response::HTTP_NOT_FOUND =>
-                throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR =>
-                throw new DockerClientException(),
-            Response::HTTP_OK =>
-                $this->dtoFactory->createContainerFromResponse($response)
+        return match ($response->getStatusCode()) {
+            Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_OK => $this->dtoFactory->createContainerFromResponse($response)
         };
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStart(string $id, ?string $detachKeys = null): bool
+    public function containerStart(string $id, ?string $detachKeys = null): bool
     {
         try {
             $response = $this->client->containerStart(...func_get_args());
@@ -85,22 +78,18 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
             throw new DockerClientException(previous: $clientException);
         }
 
-        return match($response->getStatusCode()) {
-            Response::HTTP_NOT_MODIFIED =>
-                throw new ContainerAlreadyStartedException($id),
-            Response::HTTP_NOT_FOUND =>
-                throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR =>
-                throw new DockerClientException(),
-            Response::HTTP_NO_CONTENT =>
-                true
+        return match ($response->getStatusCode()) {
+            Response::HTTP_NOT_MODIFIED => throw new ContainerAlreadyStartedException($id),
+            Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_NO_CONTENT => true
         };
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStop(string $id, ?string $signal = null, ?int $t = null): bool
+    public function containerStop(string $id, ?string $signal = null, ?int $t = null): bool
     {
         try {
             $response = $this->client->containerStop(...func_get_args());
@@ -108,22 +97,18 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
             throw new DockerClientException(previous: $clientException);
         }
 
-        return match($response->getStatusCode()) {
-            Response::HTTP_NOT_MODIFIED =>
-                throw new ContainerAlreadyStoppedException($id),
-            Response::HTTP_NOT_FOUND =>
-                throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR =>
-                throw new DockerClientException(),
-            Response::HTTP_NO_CONTENT =>
-                true
+        return match ($response->getStatusCode()) {
+            Response::HTTP_NOT_MODIFIED => throw new ContainerAlreadyStoppedException($id),
+            Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_NO_CONTENT => true
         };
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerRestart(string $id, ?string $signal = null, ?int $t = null): bool
+    public function containerRestart(string $id, ?string $signal = null, ?int $t = null): bool
     {
         try {
             $response = $this->client->containerRestart(...func_get_args());
@@ -131,15 +116,25 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
             throw new DockerClientException(previous: $clientException);
         }
 
-        return match($response->getStatusCode()) {
-            Response::HTTP_NOT_FOUND =>
-                throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR =>
-                throw new DockerClientException(),
-            Response::HTTP_NO_CONTENT =>
-                true
+        return match ($response->getStatusCode()) {
+            Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_NO_CONTENT => true
         };
     }
 
+    public function containerStats(string $id, string $stream = 'false'): ContainerStats
+    {
+        try {
+            $response = $this->client->containerStats(...func_get_args());
+        } catch (ClientExceptionInterface $clientException) {
+            throw new DockerClientException(previous: $clientException);
+        }
 
+        return match ($response->getStatusCode()) {
+            Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
+            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
+            Response::HTTP_OK => $this->dtoFactory->createContainerStatsFromResponse($response)
+        };
+    }
 }

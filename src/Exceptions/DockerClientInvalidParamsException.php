@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Exceptions;
 
@@ -9,7 +11,7 @@ class DockerClientInvalidParamsException extends DockerClientException
     const MESSAGE = "Invalid params in docker api call, message:\n%s\nArguments given:\n%s";
 
     /**
-     * @param array<mixed> $params
+     * @param  array<mixed>  $params
      */
     public function __construct(array $params, ResponseInterface $response)
     {

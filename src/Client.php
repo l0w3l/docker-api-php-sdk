@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker;
 
 use JsonException;
 use Lowel\Docker\Requests\RequestFactoryInterface;
-use Lowel\Docker\Requests\RequestFactoryJson;
 use Lowel\Docker\Requests\RequestTypeEnum;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
@@ -12,14 +13,12 @@ use Psr\Http\Message\ResponseInterface;
 
 class Client implements ClientInterface
 {
-    /** @var HttpClientInterface  */
     protected HttpClientInterface $httpClient;
-    /** @var RequestFactoryInterface  */
+
     protected RequestFactoryInterface $requestFactory;
 
-
     /**
-     * @param HttpClientInterface $httpClient - PSR Http client instance
+     * @param  HttpClientInterface  $httpClient  - PSR Http client instance
      */
     public function __construct(HttpClientInterface $httpClient, RequestFactoryInterface $requestFactory)
     {
@@ -29,16 +28,12 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
-     * @param bool $all
-     * @param int|null $limit
-     * @param bool $size
-     * @param string|null $filters
-     * @return ResponseInterface
+     * {@inheritDoc}
+     *
      * @throws JsonException
      * @throws ClientExceptionInterface
      */
-    function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): ResponseInterface
+    public function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): ResponseInterface
     {
         $request = $this->requestFactory->get(
             RequestTypeEnum::CONTAINER_LIST,
@@ -50,9 +45,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerInspect(string $id, bool $size = false): ResponseInterface
+    public function containerInspect(string $id, bool $size = false): ResponseInterface
     {
         $request = $this->requestFactory->get(
             RequestTypeEnum::CONTAINER_INSPECT,
@@ -64,9 +59,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStart(string $id, ?string $detachKeys = null): ResponseInterface
+    public function containerStart(string $id, ?string $detachKeys = null): ResponseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_START,
@@ -78,9 +73,9 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStop(string $id, ?string $signal = null, ?int $t = null): ResponseInterface
+    public function containerStop(string $id, ?string $signal = null, ?int $t = null): ResponseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_STOP,
@@ -92,14 +87,28 @@ class Client implements ClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerRestart(string $id, ?string $signal = null, ?int $t = null): ResponseInterface
+    public function containerRestart(string $id, ?string $signal = null, ?int $t = null): ResponseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_RESTART,
             ['id' => $id],
             compact('signal', 't')
+        );
+
+        return $this->httpClient->sendRequest($request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function containerStats(string $id, string $stream = 'false'): ResponseInterface
+    {
+        $request = $this->requestFactory->get(
+            RequestTypeEnum::CONTAINER_STATS,
+            ['id' => $id],
+            ['stream' => $stream]
         );
 
         return $this->httpClient->sendRequest($request);
