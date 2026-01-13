@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Async;
 
@@ -9,9 +11,8 @@ use Lowel\Docker\Requests\RequestTypeEnum;
 
 class AsyncClient implements AsyncClientInterface
 {
-    /** @var GuzzleClient */
     protected GuzzleClient $asyncHttpClient;
-    /** @var RequestFactoryInterface  */
+
     protected RequestFactoryInterface $requestFactory;
 
     public function __construct(GuzzleClient $asyncHttpClient, RequestFactoryInterface $requestFactory)
@@ -21,9 +22,9 @@ class AsyncClient implements AsyncClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): PromiseInterface
+    public function containerList(bool $all = false, ?int $limit = null, bool $size = false, ?string $filters = null): PromiseInterface
     {
         $request = $this->requestFactory->get(
             RequestTypeEnum::CONTAINER_LIST,
@@ -35,9 +36,9 @@ class AsyncClient implements AsyncClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerInspect(string $id, bool $size = false): PromiseInterface
+    public function containerInspect(string $id, bool $size = false): PromiseInterface
     {
         $request = $this->requestFactory->get(
             RequestTypeEnum::CONTAINER_INSPECT,
@@ -49,9 +50,9 @@ class AsyncClient implements AsyncClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStart(string $id, ?string $detachKeys = null): PromiseInterface
+    public function containerStart(string $id, ?string $detachKeys = null): PromiseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_START,
@@ -63,9 +64,9 @@ class AsyncClient implements AsyncClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerStop(string $id, ?string $signal = null, ?int $t = null): PromiseInterface
+    public function containerStop(string $id, ?string $signal = null, ?int $t = null): PromiseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_STOP,
@@ -77,9 +78,9 @@ class AsyncClient implements AsyncClientInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function containerRestart(string $id, ?string $signal = null, ?int $t = null): PromiseInterface
+    public function containerRestart(string $id, ?string $signal = null, ?int $t = null): PromiseInterface
     {
         $request = $this->requestFactory->post(
             RequestTypeEnum::CONTAINER_RESTART,
@@ -90,5 +91,17 @@ class AsyncClient implements AsyncClientInterface
         return $this->asyncHttpClient->sendAsync($request);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function containerStats(string $id, string $stream = 'false'): PromiseInterface
+    {
+        $request = $this->requestFactory->get(
+            RequestTypeEnum::CONTAINER_STATS,
+            ['id' => $id],
+            ['stream' => $stream]
+        );
 
+        return $this->asyncHttpClient->sendAsync($request);
+    }
 }

@@ -1,9 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Lowel\Docker\Requests\RequestBuilder;
 
-beforeEach(function() {
-    $this->requestBuilder = new RequestBuilder();
+beforeEach(function () {
+    $this->requestBuilder = new RequestBuilder;
 });
 
 test('uri formatter', function () {
@@ -17,18 +19,18 @@ test('uri formatter', function () {
         ->toBe('/test/123/test/12312');
 });
 
-test('uri formatter exceptions', function() {
+test('uri formatter exceptions', function () {
     $this->requestBuilder->uriFormatter('/{id}', []);
 })->throws(\Lowel\Docker\Exceptions\Requests\UriParamWasNotFounded::class);
 
-test('uri query params', function() {
+test('uri query params', function () {
     $state = $this->requestBuilder->setUriQueryParams(['a' => 123, 'b' => 456]);
 
     expect($state->uri)
         ->toBe('?a=123&b=456');
 });
 
-test('request builder', function() {
+test('request builder', function () {
     $requestBuilderState = $this->requestBuilder
         ->setMethod('GET')
         ->setBody('qweqweqwe')
@@ -45,7 +47,7 @@ test('request builder', function() {
 
 });
 
-test('set body json', function() {
+test('set body json', function () {
     expect($this->requestBuilder->setBodyJson(['data' => 'value'])->body)
         ->toBe(json_encode(['data' => 'value']));
 });

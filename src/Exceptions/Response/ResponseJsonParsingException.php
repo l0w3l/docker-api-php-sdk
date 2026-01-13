@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Exceptions\Response;
 
@@ -14,6 +16,4 @@ class ResponseJsonParsingException extends DockerClientException
 
         parent::__construct($message);
     }
-
-
 }

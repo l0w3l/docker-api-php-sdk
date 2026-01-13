@@ -2,7 +2,7 @@
 
 ## Installation
 
-Current library was tested on docker 1.41 api version! 
+Current library was tested on docker 1.51 api version! 
 
 ```bash
 composer require lowel/docker-api-php-sdk
