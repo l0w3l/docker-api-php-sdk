@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Response;
 
@@ -9,12 +11,12 @@ use Psr\Http\Message\ResponseInterface;
 class ResponseParser implements ResponseParserInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
-    function parseBodyAsJson(ResponseInterface $response): array
+    public function parseBodyAsJson(ResponseInterface $response): array
     {
-        if (!$response->hasHeader('Content-Type') || !$response->getHeader('Content-Type') === ['application/json']) {
-            throw new ResponseJsonContentTypeException();
+        if (! $response->hasHeader('Content-Type') || ! $response->getHeader('Content-Type') === ['application/json']) {
+            throw new ResponseJsonContentTypeException;
         }
 
         $rawData = $response->getBody()->getContents();

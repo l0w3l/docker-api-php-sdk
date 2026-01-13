@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker;
 
@@ -10,9 +12,8 @@ use Lowel\Docker\Requests\RequestFactoryJson;
 
 class ClientFactory
 {
-    const DEFAULT_DOCKER_API_VERSION = '1.41v';
+    const DEFAULT_DOCKER_API_VERSION = '1.51v';
 
-    /** @var array  */
     protected readonly array $config;
 
     public function __construct()
@@ -21,48 +22,38 @@ class ClientFactory
 
         $this->config = [
             'base_uri' => "http://{$dockerApiVersion}/",
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ],
             'curl' => [
-                CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock'
-            ]
+                CURLOPT_UNIX_SOCKET_PATH => '/var/run/docker.sock',
+            ],
         ];
     }
 
-    /**
-     * @return ClientInterface
-     */
-    function getClient(): ClientInterface
+    public function getClient(): ClientInterface
     {
-        return new Client($this->initGuzzle(), new RequestFactoryJson());
+        return new Client($this->initGuzzle(), new RequestFactoryJson);
     }
 
-    /**
-     * @return ClientResponseHandlerInterface
-     */
-    function getClientWithHandler(): ClientResponseHandlerInterface
+    public function getClientWithHandler(): ClientResponseHandlerInterface
     {
         return new ClientResponseHandler($this->getClient());
     }
 
-    /**
-     * @return AsyncClientInterface
-     */
-    function getAsyncClient(): AsyncClientInterface
+    public function getAsyncClient(): AsyncClientInterface
     {
-        return new AsyncClient($this->initGuzzle(), new RequestFactoryJson());
+        return new AsyncClient($this->initGuzzle(), new RequestFactoryJson);
     }
 
-    /**
-     * @return AsyncClientResponseHandlerInterface
-     */
-    function getAsyncClientWithHandler(): AsyncClientResponseHandlerInterface
+    public function getAsyncClientWithHandler(): AsyncClientResponseHandlerInterface
     {
         return new AsyncClientResponseHandler($this->getAsyncClient());
     }
 
     /**
      * Default init with Guzzle
-     *
-     * @return \GuzzleHttp\Client
      */
     protected function initGuzzle(): \GuzzleHttp\Client
     {

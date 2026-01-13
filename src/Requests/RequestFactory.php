@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Requests;
 
@@ -7,22 +9,17 @@ use Psr\Http\Message\RequestInterface;
 
 class RequestFactory implements RequestFactoryInterface
 {
-    /** @var RequestBuilder  */
     protected RequestBuilder $requestBuilder;
 
     public function __construct()
     {
-        $this->requestBuilder = new RequestBuilder();
+        $this->requestBuilder = new RequestBuilder;
     }
 
-
     /**
-     * @param RequestTypeEnum $requestTypeEnum
-     * @param array $params
-     * @param array $data
-     * @return RequestInterface
+     * @param  array  $data
      */
-    function get(RequestTypeEnum $requestTypeEnum, array $params, $data): RequestInterface
+    public function get(RequestTypeEnum $requestTypeEnum, array $params, $data): RequestInterface
     {
         return $this->requestFromRequestBuilder(
             $this->requestBuilder
@@ -33,12 +30,9 @@ class RequestFactory implements RequestFactoryInterface
     }
 
     /**
-     * @param RequestTypeEnum $requestTypeEnum
-     * @param array $params
-     * @param array $data
-     * @return RequestInterface
+     * @param  array  $data
      */
-    function post(RequestTypeEnum $requestTypeEnum, array $params, $data): RequestInterface
+    public function post(RequestTypeEnum $requestTypeEnum, array $params, $data): RequestInterface
     {
         return $this->requestFromRequestBuilder(
             $this->requestBuilder
@@ -48,10 +42,6 @@ class RequestFactory implements RequestFactoryInterface
         );
     }
 
-    /**
-     * @param RequestBuilder $requestBuilder
-     * @return RequestInterface
-     */
     protected function requestFromRequestBuilder(RequestBuilder $requestBuilder): RequestInterface
     {
         $request = new Request(

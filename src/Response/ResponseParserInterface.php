@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Lowel\Docker\Response;
 
@@ -11,10 +13,8 @@ interface ResponseParserInterface
     /**
      * Parse response body as json
      *
-     * @param ResponseInterface $response
-     * @return array
      * @throws ResponseJsonContentTypeException
      * @throws ResponseJsonParsingException
      */
-    function parseBodyAsJson(ResponseInterface $response): array;
+    public function parseBodyAsJson(ResponseInterface $response): array;
 }

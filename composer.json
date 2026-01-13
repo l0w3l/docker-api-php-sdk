@@ -21,7 +21,8 @@
         "symfony/http-foundation": "^7.1"
     },
     "require-dev": {
-        "pestphp/pest": "^2.16"
+        "pestphp/pest": "^2.16",
+        "laravel/pint": "^1.27"
     },
     "config": {
         "allow-plugins": {
