@@ -16,7 +16,7 @@ final readonly class ImageManifestDescriptor
         public ?array $urls,
         public array $annotations,
         public ?string $data,
-        public Platform $platform,
+        public ?Platform $platform,
         public ?string $artifactType
     ) {}
 }

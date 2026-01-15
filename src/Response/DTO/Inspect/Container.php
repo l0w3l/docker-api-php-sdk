@@ -30,7 +30,7 @@ final readonly class Container
         public string $ProcessLabel,
         public string $AppArmorProfile,
         public array $ExecIDs,
-        public GraphDriver $GraphDriver,
+        public ?GraphDriver $GraphDriver,
         public ?string $SizeRw,
         public ?string $SizeRootFs
     ) {}
