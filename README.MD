@@ -1,4 +1,4 @@
-# Docker Engine API 1.41 SDK based on PHP
+# Docker Engine API 1.51 SDK based on PHP
 
 ## Installation
 

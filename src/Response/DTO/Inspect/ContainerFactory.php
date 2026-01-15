@@ -16,7 +16,10 @@ final class ContainerFactory
             true => self::createImageManifest($data['ImageManifestDescriptor']),
             false => null,
         };
-        $graphDriver = self::createGraphDriver($data['GraphDriver']);
+        $graphDriver = match (($data['GraphDriver'] ?? null) !== null) {
+            true => self::createGraphDriver($data['GraphDriver']),
+            false => null,
+        };
 
         return new Container(
             Id: $data['Id'],
@@ -89,9 +92,9 @@ final class ContainerFactory
     private static function createPlatform(array $data): Platform
     {
         return new Platform(
-            architecture: $data['architecture'],
-            os: $data['os'],
-            os_version: $data['os.version'],
+            architecture: $data['architecture'] ?? null,
+            os: $data['os'] ?? null,
+            os_version: $data['os.version'] ?? null,
             os_features: $data['os.features'] ?? [],
             variant: $data['variant'] ?? null
         );
@@ -99,7 +102,11 @@ final class ContainerFactory
 
     private static function createImageManifest(array $data): ImageManifestDescriptor
     {
-        $platform = self::createPlatform($data['platform']);
+
+        $platform = match (($data['platform'] ?? null) !== null) {
+            true => self::createPlatform($data['platform']),
+            false => null,
+        };
 
         return new ImageManifestDescriptor(
             mediaType: $data['mediaType'],

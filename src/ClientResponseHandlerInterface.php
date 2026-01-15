@@ -9,6 +9,7 @@ use Lowel\Docker\Exceptions\ContainerAlreadyStoppedException;
 use Lowel\Docker\Exceptions\ContainerNotFoundException;
 use Lowel\Docker\Exceptions\DockerClientException;
 use Lowel\Docker\Exceptions\DockerClientInvalidParamsException;
+use Lowel\Docker\Exceptions\Response\ResponseErrorException;
 use Lowel\Docker\Response\DTO\Inspect\Container;
 use Lowel\Docker\Response\DTO\List\ContainerListItem;
 use Lowel\Docker\Response\DTO\Stats\ContainerStats;
@@ -24,7 +25,7 @@ interface ClientResponseHandlerInterface
      * @param  string|null  $filters  - Filters to process on the container list, encoded as JSON (a map[string][]string). For example, {"status": ["paused"]} will only return paused containers.
      * @return array<ContainerListItem>
      *
-     * @throws DockerClientException|DockerClientInvalidParamsException
+     * @throws DockerClientException|DockerClientInvalidParamsException|ResponseErrorException
      */
     public function containerList(
         bool $all = false,
@@ -53,7 +54,7 @@ interface ClientResponseHandlerInterface
      * @param  string|null  $detachKeys  - Override the key sequence for detaching a container. Format is a single character [a-Z] or ctrl-<value> where <value> is one of: a-z, @, ^, [, , or _.
      * @return true
      *
-     * @throws DockerClientException|ContainerNotFoundException|ContainerAlreadyStartedException|DockerClientInvalidParamsException
+     * @throws DockerClientException|ContainerNotFoundException|ContainerAlreadyStartedException|DockerClientInvalidParamsException|ResponseErrorException
      */
     public function containerStart(
         string $id,
@@ -68,7 +69,7 @@ interface ClientResponseHandlerInterface
      * @param  int|null  $t  - Number of seconds to wait before killing the container
      * @return true
      *
-     * @throws DockerClientException|ContainerNotFoundException|ContainerAlreadyStoppedException|DockerClientInvalidParamsException
+     * @throws DockerClientException|ContainerNotFoundException|ContainerAlreadyStoppedException|DockerClientInvalidParamsException|ResponseErrorException
      */
     public function containerStop(
         string $id,
@@ -84,7 +85,7 @@ interface ClientResponseHandlerInterface
      * @param  int|null  $t  - Number of seconds to wait before killing the container
      * @return true
      *
-     * @throws DockerClientException|ContainerNotFoundException|DockerClientInvalidParamsException
+     * @throws DockerClientException|ContainerNotFoundException|DockerClientInvalidParamsException|ResponseErrorException
      */
     public function containerRestart(
         string $id,
@@ -96,7 +97,7 @@ interface ClientResponseHandlerInterface
      * Get container stats
      *
      *
-     * @throws DockerClientException|ContainerNotFoundException|DockerClientInvalidParamsException
+     * @throws DockerClientException|ContainerNotFoundException|DockerClientInvalidParamsException|ResponseErrorException
      */
     public function containerStats(
         string $id,

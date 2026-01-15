@@ -9,6 +9,7 @@ use Lowel\Docker\Exceptions\ContainerAlreadyStoppedException;
 use Lowel\Docker\Exceptions\ContainerNotFoundException;
 use Lowel\Docker\Exceptions\DockerClientException;
 use Lowel\Docker\Exceptions\DockerClientInvalidParamsException;
+use Lowel\Docker\Exceptions\Response\ResponseErrorException;
 use Lowel\Docker\Response\DTO\Inspect\Container;
 use Lowel\Docker\Response\DTO\Stats\ContainerStats;
 use Lowel\Docker\Response\DTOFactory;
@@ -62,8 +63,8 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
 
         return match ($response->getStatusCode()) {
             Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
-            Response::HTTP_OK => $this->dtoFactory->createContainerFromResponse($response)
+            Response::HTTP_OK => $this->dtoFactory->createContainerFromResponse($response),
+            default => throw new ResponseErrorException($response),
         };
     }
 
@@ -81,8 +82,8 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
         return match ($response->getStatusCode()) {
             Response::HTTP_NOT_MODIFIED => throw new ContainerAlreadyStartedException($id),
             Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
-            Response::HTTP_NO_CONTENT => true
+            Response::HTTP_NO_CONTENT => true,
+            default => throw new ResponseErrorException($response),
         };
     }
 
@@ -100,8 +101,8 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
         return match ($response->getStatusCode()) {
             Response::HTTP_NOT_MODIFIED => throw new ContainerAlreadyStoppedException($id),
             Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
-            Response::HTTP_NO_CONTENT => true
+            Response::HTTP_NO_CONTENT => true,
+            default => throw new ResponseErrorException($response),
         };
     }
 
@@ -118,8 +119,8 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
 
         return match ($response->getStatusCode()) {
             Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
-            Response::HTTP_NO_CONTENT => true
+            Response::HTTP_NO_CONTENT => true,
+            default => throw new ResponseErrorException($response),
         };
     }
 
@@ -133,8 +134,8 @@ class ClientResponseHandler implements ClientResponseHandlerInterface
 
         return match ($response->getStatusCode()) {
             Response::HTTP_NOT_FOUND => throw new ContainerNotFoundException($id),
-            Response::HTTP_INTERNAL_SERVER_ERROR => throw new DockerClientException,
-            Response::HTTP_OK => $this->dtoFactory->createContainerStatsFromResponse($response)
+            Response::HTTP_OK => $this->dtoFactory->createContainerStatsFromResponse($response),
+            default => throw new ResponseErrorException($response),
         };
     }
 }
